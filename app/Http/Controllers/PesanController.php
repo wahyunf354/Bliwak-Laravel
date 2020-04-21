@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Barang;
 use App\Pesanan;
 use App\PesananDetail;
+use App\user;
 use Auth;
 use SweetAlert;
 use Carbon\Carbon;
@@ -30,6 +31,7 @@ class PesanController extends Controller
     	//validasi melebihi stok
     	if($request->jumlah_pesanan > $barang->stok)
     	{
+            alert()->error('Maaf pesanan anda melebihi stok', 'Gagal');
     		return redirect('pesan/'.$id);
     	}
 
@@ -43,6 +45,7 @@ class PesanController extends Controller
 	    	$pesanan->tanggal = $tanggal;
 	    	$pesanan->status = 0;
 	    	$pesanan->jumlah_harga = 0;
+            $pesanan->kode = mt_rand(100, 999); 
 	    	$pesanan->save();
     	}
 
@@ -87,7 +90,7 @@ class PesanController extends Controller
             $pesanan_details = PesananDetail::where('pesanan_id', $pesanan->id)->get();
             return view('pesan.check_out', compact('pesanan', 'pesanan_details'));
         }
-        return view('pesan.check_out', compact('pesanan'));    
+        return view('pesan.check_out', compact('pesanan'));
     }
 
     public function delete($id)
@@ -105,7 +108,22 @@ class PesanController extends Controller
 
     public function konfirmasi()
     {
-        $pesanan = Pesanan::where('user_id', Auth::user()->id )->where('status', 0)->first();
+        $user = User::where('id', Auth::user()->id)->first();
+
+        if(empty($user->alamat))
+        {
+            alert()->error('Identitas harap dilengkapi', 'Gagal');
+            return redirect('profile');
+        }
+
+        if(empty($user->nohp))
+        {
+            alert()->error('Identitas harap dilengkapi', 'Gagal');
+            return redirect('profile');
+        }
+
+
+        $pesanan = Pesanan::where('user_id', Auth::id()  )->where('status', 0)->first();
         $pesanan_id = $pesanan->id;
         $pesanan->status = 1;
         $pesanan->update();
@@ -117,8 +135,7 @@ class PesanController extends Controller
             $barang->update();
         }
 
-
-        alert()->success('Pesanan Berhasil Check Out', 'Berhasil');
-        return redirect('home');
+        alert()->success('Pesanan Berhasil Check Out dan Silahkan Melakukan Pembayaran', 'Berhasil');
+        return redirect('history/'.$pesanan_id);
     }
 }

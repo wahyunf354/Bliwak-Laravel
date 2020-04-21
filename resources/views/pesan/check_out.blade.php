@@ -24,6 +24,7 @@
                   <thead>
                     <tr>
                       <th>No</th>
+                      <th>Gambar</th>
                       <th>Nama Barang</th>
                       <th>Jumlah</th>
                       <th>Harga</th>
@@ -36,6 +37,9 @@
                     @foreach($pesanan_details as $pesanan_detail)
                     <tr>
                       <td>{{ $no++ }}</td>
+                      <td>
+                        <img src="{{ url('uploads/') }}/{{ $pesanan_detail->barang->gambar }}" width="100">
+                      </td>
                       <td>{{ $pesanan_detail->barang->nama_barang }}</td>
                       <td>{{ $pesanan_detail->jumlah }}</td>
                       <td>Rp. {{ number_format($pesanan_detail->barang->harga, 0, ',', '.') }}</td>
@@ -44,13 +48,13 @@
                         <form action="{{ url('check-out') }}/{{ $pesanan_detail->id }}" method="post">
                           @csrf
                           {{ method_field('DELETE') }}
-                          <button class="btn btn-outline-danger btn-sm" type="submit"><i class="fa fa-trash"></i></button>
+                          <button class="btn btn-outline-danger btn-sm" type="submit" onclick="return confirm('Anda yakin akan menghapus data? ');"><i class="fa fa-trash"></i></button>
                         </form>
                       </td>
                     </tr>       
                     @endforeach
                     <tr class="">
-                      <th colspan="4" align="right">Total Harga</th>
+                      <th colspan="5" align="right">Total Harga</th>
                       <th>Rp. {{ number_format($pesanan->jumlah_harga, 0, ',', '.') }}</th>
                       <td>
                         <a href="{{ url('konfirmasi-check-out') }}" class="btn-sm btn btn-outline-primary">

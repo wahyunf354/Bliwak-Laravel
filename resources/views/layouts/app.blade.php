@@ -25,7 +25,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/home') }}">
+                <a class="navbar-brand" href="{{ url('/') }}">
                    <img src="{{ url('images/logo.png')}}" width="50" alt="">
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -42,7 +42,7 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         <?php 
-                            $pesanan_utama = \App\Pesanan::where('user_id', Auth::user()->id )->where('status', 0)->first();
+                            $pesanan_utama = \App\Pesanan::where('user_id',  Auth::id()  )->where('status', 0)->first();
                             if(!empty($pesanan_utama))
                             {
                             $notif = \App\PesananDetail::where('pesanan_id', $pesanan_utama->id)->count();
@@ -72,6 +72,14 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ url('profile') }}">
+                                        Profile
+                                    </a>
+
+                                    <a class="dropdown-item" href="{{ url('history') }}">
+                                        Riwayat Pemesanan
+                                    </a>
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

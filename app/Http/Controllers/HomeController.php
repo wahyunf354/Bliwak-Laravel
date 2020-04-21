@@ -23,7 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $barangs = Barang::paginate(20);
+        $barangs = Barang::paginate(20)->where('stok', '>', 0);
         return view('home', compact('barangs'));
     }
 }
